@@ -267,12 +267,19 @@ echo "/etc/pam.d/common-session ถูกแก้ไขเรียบร้อ
 echo "/etc/pam.d/common-auth ถูกแก้ไขเรียบร้อยแล้ว และสำรองไฟล์เก่าไว้ที่ /etc/pam.d/common-auth.bak.*"		
 }
 
+setup_timeshift(){
+	sudo apt update
+	sudo apt install -y timeshift
+	sudo timeshift --create --comments "starter"
+}
+
 echo "please select choice"
 echo "1) setup tool"
 echo "2) install docker "
 echo "3) install packettracer"
 echo "4) setup nis "
 echo "5) setup pam"
+echo "6) setup_timeshift"
 read choice
 
 case $choice in 
@@ -290,6 +297,9 @@ case $choice in
 		;;
 	5)
 		setup_pam
+		;;
+	6) 
+		setup_timeshift
 		;;
 	*)
 		echo "wrong choice"
