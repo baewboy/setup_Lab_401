@@ -261,6 +261,8 @@ session required pam_mkhomedir.so skel=/etc/skel umask=0077
 # end of pam-auth-update config
 EOF
 
+echo '%student ALL=(ALL) ALL' | sudo tee /etc/sudoers.d/student
+sudo chmod 440 /etc/sudoers.d/student
 echo "/etc/pam.d/common-session ถูกแก้ไขเรียบร้อยแล้ว และสำรองไฟล์เก่าไว้ที่ /etc/pam.d/common-session.bak.*"
 echo "/etc/pam.d/common-auth ถูกแก้ไขเรียบร้อยแล้ว และสำรองไฟล์เก่าไว้ที่ /etc/pam.d/common-auth.bak.*"		
 }
