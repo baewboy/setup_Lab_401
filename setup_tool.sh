@@ -184,7 +184,85 @@ echo "แก้ไข /etc/nsswitch.conf เรียบร้อยแล้ว
 
 }
 setup_pam(){
-	
+	sudo tar -xzf pam_elogin.tar.gz
+	cd pam-elogin/
+	sudo make install
+	# สำรองไฟล์เก่า พร้อมเวลาปัจจุบัน
+sudo cp /etc/pam.d/common-auth /etc/pam.d/common-auth.bak.$(date +%F_%T)
+
+# เขียนทับไฟล์ด้วยเนื้อหาใหม่
+sudo tee /etc/pam.d/common-auth > /dev/null <<'EOF'
+# /etc/pam.d/common-auth - authentication settings common to all services
+#
+# This file is included from other service-specific PAM config files,
+# and should contain a list of the authentication modules that define
+# the central authentication scheme for use on the system
+# (e.g., /etc/shadow, LDAP, Kerberos, etc.).  The default is to use the
+# traditional Unix authentication mechanisms.
+#
+# As of pam 1.0.1-6, this file is managed by pam-auth-update by default.
+# To take advantage of this, it is recommended that you configure any
+# local modules either before or after the default block, and use
+# pam-auth-update to manage selection of other modules.  See
+# pam-auth-update(8) for details.
+
+# here are the per-package modules (the "Primary" block)
+auth    [success=3 default=ignore]      pam_elogin_api.so
+auth    [success=2 default=ignore]      pam_unix.so nullok
+auth    [success=1 default=ignore]      pam_sss.so use_first_pass
+# here's the fallback if no module succeeds
+auth    requisite                       pam_deny.so
+# prime the stack with a positive return value if there isn't one already;
+# this avoids us returning an error just because nothing sets a success code
+# since the modules above will each just jump around
+auth    required                        pam_permit.so
+# and here are more per-package modules (the "Additional" block)
+auth    optional                        pam_cap.so
+# end of pam-auth-update config
+EOF
+
+# สำรองไฟล์เก่า พร้อมเวลาปัจจุบัน
+sudo cp /etc/pam.d/common-session /etc/pam.d/common-session.bak.$(date +%F_%T)
+
+# เขียนทับไฟล์ด้วยเนื้อหาใหม่
+sudo tee /etc/pam.d/common-session > /dev/null <<'EOF'
+#
+# /etc/pam.d/common-session - session-related modules common to all services
+#
+# This file is included from other service-specific PAM config files,
+# and should contain a list of modules that define tasks to be performed
+# at the start and end of interactive sessions.
+#
+# As of pam 1.0.1-6, this file is managed by pam-auth-update by default.
+# To take advantage of this, it is recommended that you configure any
+# local modules either before or after the default block, and use
+# pam-auth-update to manage selection of other modules.  See
+# pam-auth-update(8) for details.
+
+# here are the per-package modules (the "Primary" block)
+session [default=1]                     pam_permit.so
+# here's the fallback if no module succeeds
+session requisite                       pam_deny.so
+# prime the stack with a positive return value if there isn't one already;
+# this avoids us returning an error just because nothing sets a success code
+# since the modules above will each just jump around
+session required                        pam_permit.so
+# The pam_umask module will set the umask according to the system default in
+# /etc/login.defs and user settings, solving the problem of different
+# umask settings with different shells, display managers, remote sessions etc.
+# See "man pam_umask".
+session optional                        pam_umask.so
+# and here are more per-package modules (the "Additional" block)
+session required        pam_unix.so
+session optional                        pam_sss.so
+session optional        pam_systemd.so
+
+session required pam_mkhomedir.so skel=/etc/skel umask=0077
+# end of pam-auth-update config
+EOF
+
+echo "/etc/pam.d/common-session ถูกแก้ไขเรียบร้อยแล้ว และสำรองไฟล์เก่าไว้ที่ /etc/pam.d/common-session.bak.*"
+echo "/etc/pam.d/common-auth ถูกแก้ไขเรียบร้อยแล้ว และสำรองไฟล์เก่าไว้ที่ /etc/pam.d/common-auth.bak.*"		
 }
 
 echo "please select choice"
