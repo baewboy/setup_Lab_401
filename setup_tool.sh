@@ -30,7 +30,7 @@ sudo apt install -y nodejs
 
 # ติดตั้ง Python
 sudo apt update
-sudo apt install -y python3 python3-pip
+sudo apt install -y python3 python3-pip python3-venv
 
 # ติดตั้ง Go (ตรวจสอบว่ามีไฟล์ go1.24.4.linux-amd64.tar.gz ในไดเรกทอรีเดียวกันก่อนรัน)
 wget https://go.dev/dl/go1.24.4.linux-amd64.tar.gz
@@ -94,6 +94,52 @@ echo "Docker installation complete!"
 	
 }
 
+install_packettracer(){
+
+
+# อัพเดตแพ็กเกจและติดตั้ง python3-venv ถ้ายังไม่มี
+if ! dpkg -s python3-venv >/dev/null 2>&1; then
+  echo "ติดตั้ง python3-venv..."
+  sudo apt update
+  sudo apt install -y python3-venv
+fi
+
+# สร้าง virtual environment ถ้ายังไม่มีโฟลเดอร์ myenv
+if [ ! -d "gdown_env" ]; then
+  echo "สร้าง virtual environment..."
+  python3 -m venv gdown_env
+fi
+
+# activate virtual environment
+
+
+# ติดตั้ง gdown ใน venv
+echo "ติดตั้ง gdown..."
+./myenv/bin/pip install --upgrade pip
+./myenv/bin/pip install gdown
+
+# ดาวน์โหลดไฟล์จาก Google Drive
+FILE_ID="1sgpENt8hQmLdTJHlhIMa_eGn7iZcPhIx"
+OUTPUT="Packet_Tracer822_amd64_signed.deb"
+
+./myenv/bin/gdown https://drive.google.com/uc?id=${FILE_ID} -O ${OUTPUT}
+
+echo "ดาวน์โหลดเสร็จสิ้น: ${OUTPUT}"
+
+git clone https://github.com/farhatizakaria/CiscoPacketTracer-Ubuntu_24.10.git
+cd CiscoPacketTracer-Ubuntu_24.10
+
+sudo apt update && sudo apt upgrade -y
+sudo dpkg -i libgl1-mesa-glx_23.0.4-0ubuntu1~22.04.1_amd64.deb
+sudo dpkg -i dialog_1.3-20240101-1_amd64.deb
+sudo dpkg -i libxcb-xinerama0-dev_1.15-1ubuntu2_amd64.deb
+
+cd ..
+sudo dpkg -i Packet_Tracer822_amd64_signed.deb
+
+packettracer
+
+}
 echo "please select choice"
 echo "1) setup tool"
 echo "2) install docker "
@@ -110,7 +156,7 @@ case $choice in
 		install_docker
 		;;
 	3)
-		echo "install packettracer"
+		install_packettracer
 		;;
 	*)
 		echo "wrong choice"
