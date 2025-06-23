@@ -1,10 +1,50 @@
 #!/bin/bash
-
+first_setup(){
 # อัปเดตแพ็คเกจ
 sudo apt update
-
+sudo apt upgrade -y
 # ติดตั้งแพ็คเกจพื้นฐาน
-sudo apt install -y wireshark git vlc putty
+sudo apt install -y wireshark git vlc putty 
+#ssh
+sudo apt install openssh-server
+sudo systemctl start ssh
+sudo systemctl enable ssh
+
+#docker
+sudo apt install -y \
+    ca-certificates \
+    curl \
+    gnupg \
+    lsb-release
+
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+  sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+  https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt update
+
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+#docker desktop
+	curl -LO https://desktop.docker.com/linux/main/amd64/docker-desktop-4.31.0-amd64.deb
+	sudo apt update
+	sudo apt install ./docker-desktop-4.31.0-amd64.deb
+	if [ $? -ne 0 ]; then
+   	 echo "พบปัญหา dependency: กำลังรัน 'sudo apt --fix-broken install'"
+   	 sudo apt --fix-broken install -y
+   	 echo "ลองติดตั้งอีกครั้ง..."
+   	 sudo apt install ./docker-desktop-4.31.0-amd64.deb
+	fi
+	systemctl --user start docker-desktop
+	systemctl --user enable docker-desktop
+#packetTracer 
+	
 
 #vscode
 sudo apt install wget gpg -y
@@ -14,7 +54,7 @@ sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/code sta
 sudo apt update
 sudo apt install code -y
 
-# ติดตั้ง Google Chrome
+# 	ติดตั้ง Google Chrome
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 sudo apt install -y ./google-chrome-stable_current_amd64.deb
 rm -f google-chrome-stable_current_amd64.deb
@@ -37,6 +77,29 @@ export PATH=\$PATH:/usr/local/go/bin
 EOF
 sudo chmod +x /etc/profile.d/go.sh
 
-
-
 echo "🎉 เสร็จสิ้นการติดตั้งและตั้งค่า! โปรด  logout และ login ใหม่ สำหรับโหลด path go"
+}
+
+echo "เลือกเมนู:"
+echo "1) first setup"
+echo "2) something"
+echo "3) ออกจากโปรแกรม"
+
+
+read -p "เลือก: " choice
+case "$choice" in 
+	1)
+		first_setup
+		;;
+	2)
+		echo "something"
+		;;
+	3)     
+		echo "exit program"
+		exit 0
+		;;
+	*)	
+		echo "wrong choice"
+		exit 0
+		;;
+esac
