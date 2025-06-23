@@ -4,6 +4,9 @@ setup_tool(){
 # อัปเดตแพ็คเกจ
 sudo apt update
 
+sudo apt install -y timeshift
+sudo timeshift --create --comments "default"
+
 # ติดตั้งแพ็คเกจพื้นฐาน
 sudo apt install -y wireshark git vlc putty
 
@@ -267,9 +270,7 @@ echo "/etc/pam.d/common-session ถูกแก้ไขเรียบร้อ
 echo "/etc/pam.d/common-auth ถูกแก้ไขเรียบร้อยแล้ว และสำรองไฟล์เก่าไว้ที่ /etc/pam.d/common-auth.bak.*"		
 }
 
-setup_timeshift(){
-	sudo apt update
-	sudo apt install -y timeshift
+save_timeshift(){
 	sudo timeshift --create --comments "starter"
 }
 
@@ -299,7 +300,7 @@ case $choice in
 		setup_pam
 		;;
 	6) 
-		setup_timeshift
+		save_timeshift
 		;;
 	*)
 		echo "wrong choice"
