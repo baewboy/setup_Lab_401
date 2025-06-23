@@ -275,6 +275,7 @@ save_timeshift(){
 }
 
 echo "please select choice"
+echo "enter 0 for automate"
 echo "1) setup tool"
 echo "2) install docker "
 echo "3) install packettracer"
@@ -284,6 +285,14 @@ echo "6) setup_timeshift"
 read choice
 
 case $choice in 
+	0)
+		setup_tool
+		install_docker
+		install_packettracer
+		setup_nis
+		setup_pam
+		save_timeshift
+		;;
 	1)
 		setup_tool
 		;;
@@ -304,6 +313,6 @@ case $choice in
 		;;
 	*)
 		echo "wrong choice"
-		exit
+		exit 1
 		;;
 esac
