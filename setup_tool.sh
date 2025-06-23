@@ -1,11 +1,16 @@
 #!/bin/bash
 
+setup_tool(){
 # อัปเดตแพ็คเกจ
 sudo apt update
 
 # ติดตั้งแพ็คเกจพื้นฐาน
 sudo apt install -y wireshark git vlc putty
 
+#ssh
+sudo apt install -y openssh-server
+sudo systemctl start ssh
+sudo systemctl enable ssh
 #vscode
 sudo apt install wget gpg -y
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
@@ -40,3 +45,56 @@ sudo chmod +x /etc/profile.d/go.sh
 
 
 echo "🎉 เสร็จสิ้นการติดตั้งและตั้งค่า! โปรด  logout และ login ใหม่ สำหรับโหลด path go"
+}
+install_docker(){
+
+	sudo apt-get remove docker docker-engine docker.io containerd runc
+	
+	sudo apt-get update
+	sudo apt-get install ca-certificates curl gnupg lsb-release
+
+	sudo mkdir -p /etc/apt/keyrings
+	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+	sudo gpg --dearmor -o
+
+	echo \
+ 	 "deb [arch=$(dpkg --print-architecture) \
+ 	 signed-by=/etc/apt/keyrings/docker.gpg] \
+ 	 https://download.docker.com/linux/ubuntu \
+ 	 $(lsb_release -cs) stable" | \
+ 	 sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+	sudo apt-get update
+	sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+	docker --version
+	
+	wget https://desktop.docker.com/linux/main/amd64/docker-desktop-amd64.deb
+	sudo apt install ./docker-desktop-*.deb
+	systemctl --user start docker-desktop
+	systemctl --user enable docker-desktop
+}
+
+echo "please select choice"
+echo "1) setup tool"
+echo "2) install docker "
+echo "3) install packettracer"
+
+
+read choice
+
+case $choice in 
+	1)
+		setup_tool
+		;;
+	2)
+		install_docker
+		;;
+	3)
+		echo "install packettracer"
+		;;
+	*)
+		echo "wrong choice"
+		exit
+		;;
+esac
