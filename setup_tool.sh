@@ -131,30 +131,13 @@ cd CiscoPacketTracer-Ubuntu_24.10
 
 echo "อัพเดตและอัพเกรดระบบ..."
 sudo apt update && sudo apt upgrade -y
+sudo dpkg -i libgl1-mesa-glx_23.0.4-0ubuntu1~22.04.1_amd64.deb
+sudo dpkg -i dialog_1.3-20240101-1_amd64.deb
+sudo dpkg -i libxcb-xinerama0-dev_1.15-1ubuntu2_amd64.deb
 
-echo "ติดตั้ง libgl1-mesa-glx..."
-sudo dpkg -i libgl1-mesa-glx_23.0.4-0ubuntu1~22.04.1_amd64.deb || {
-  echo "เกิดข้อผิดพลาดขณะติดตั้ง libgl1-mesa-glx"
-  echo "ลองแก้ไข dependencies ที่ขัดแย้ง..."
-  sudo apt --fix-broken install -y
-  exit 1
-}
+sudo apt --fix-broken install 
 
-echo "ติดตั้ง dialog..."
-sudo dpkg -i dialog_1.3-20240101-1_amd64.deb || {
-  echo "เกิดข้อผิดพลาดขณะติดตั้ง dialog"
-  echo "ลองแก้ไข dependencies ที่ขัดแย้ง..."
-  sudo apt --fix-broken install -y
-  exit 1
-}
 
-echo "ติดตั้ง libxcb-xinerama0-dev..."
-sudo dpkg -i libxcb-xinerama0-dev_1.15-1ubuntu2_amd64.deb || {
-  echo "เกิดข้อผิดพลาดขณะติดตั้ง libxcb-xinerama0-dev"
-  echo "ลองแก้ไข dependencies ที่ขัดแย้ง..."
-  sudo apt --fix-broken install -y
-  exit 1
-}
 
 cd ..
 sudo dpkg -i Packet_Tracer822_amd64_signed.deb
