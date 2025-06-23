@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+
 setup_tool(){
 # อัปเดตแพ็คเกจ
 sudo apt update
@@ -135,7 +135,7 @@ sudo dpkg -i libgl1-mesa-glx_23.0.4-0ubuntu1~22.04.1_amd64.deb
 sudo dpkg -i dialog_1.3-20240101-1_amd64.deb
 sudo dpkg -i libxcb-xinerama0-dev_1.15-1ubuntu2_amd64.deb
 
-sudo apt --fix-broken install 
+sudo apt --fix-broken install -y 
 
 
 
@@ -146,12 +146,53 @@ sudo dpkg -i Packet_Tracer822_amd64_signed.deb
 packettracer
 
 }
+
+setup_nis(){
+ sudo apt install -y nis
+ echo "domain coe.rmutsv.ac.th server 172.16.81.1" | sudo tee -a /etc/yp.conf
+
+ 
+# backup ก่อนเผื่อมีปัญหา
+sudo cp /etc/nsswitch.conf /etc/nsswitch.conf.bak.$(date +%F_%T)
+
+# เขียนทับไฟล์
+sudo tee /etc/nsswitch.conf > /dev/null <<EOF
+passwd:        nis  files systemd sss
+group:         nis  files systemd sss
+shadow:        nis files systemd sss
+gshadow:       files systemd
+
+hosts:         nis files mdns4_minimal [NOTFOUND=return] dns
+networks:      files
+
+protocols:     db files
+services:      db files sss
+ethers:        db files
+rpc:           db files
+
+netgroup:      nis sss
+automount:     sss
+EOF
+
+echo "coe.rmutsv.ac.th" | sudo tee /etc/defaultdomain
+
+sudo systemctl restart rpcbind nscd ypbind
+sudo systemctl enable rpcbind nscd ypbind 
+echo "แก้ไข /etc/nsswitch.conf เรียบร้อยแล้ว (backup ไฟล์เดิมไว้ที่ /etc/nsswitch.conf.bak.*)"
+
+
+
+}
+setup_pam(){
+	
+}
+
 echo "please select choice"
 echo "1) setup tool"
 echo "2) install docker "
 echo "3) install packettracer"
-
-
+echo "4) setup nis "
+echo "5) setup pam"
 read choice
 
 case $choice in 
@@ -163,6 +204,12 @@ case $choice in
 		;;
 	3)
 		install_packettracer
+		;;
+	4)
+		setup_nis
+		;;
+	5)
+		setup_pam
 		;;
 	*)
 		echo "wrong choice"
