@@ -115,14 +115,14 @@ fi
 
 # ติดตั้ง gdown ใน venv
 echo "ติดตั้ง gdown..."
-./myenv/bin/pip install --upgrade pip
-./myenv/bin/pip install gdown
+./gdown_env/bin/pip install --upgrade pip
+./gdown_env/bin/pip install gdown
 
 # ดาวน์โหลดไฟล์จาก Google Drive
 FILE_ID="1sgpENt8hQmLdTJHlhIMa_eGn7iZcPhIx"
 OUTPUT="Packet_Tracer822_amd64_signed.deb"
 
-./myenv/bin/gdown https://drive.google.com/uc?id=${FILE_ID} -O ${OUTPUT}
+./gdown_env/bin/gdown https://drive.google.com/uc?id=${FILE_ID} -O ${OUTPUT}
 
 echo "ดาวน์โหลดเสร็จสิ้น: ${OUTPUT}"
 
