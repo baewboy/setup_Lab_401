@@ -283,6 +283,16 @@ save_timeshift(){
 	echo "✅ Snapshot renamed to: starter" 	
 }
 
+setup_ansible_for_client(){
+	sudo useradd -m -s /bin/bash ansible
+	echo "ansible:ansible" | sudo chpasswd
+	sudo usermod -aG sudo ansible
+
+	echo "ansible ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ansible
+	sudo chmod 440 /etc/sudoers.d/ansible
+	echo "✅ User ansible พร้อมใช้งานแล้ว (sudo แบบไม่ต้องใส่ password)"
+}
+
 echo "please select choice"
 echo "enter 0 for automate"
 echo "1) setup tool"
@@ -291,6 +301,7 @@ echo "3) install packettracer"
 echo "4) setup nis "
 echo "5) setup pam"
 echo "6) setup_timeshift"
+echo "7) setup ansible"
 read choice
 
 case $choice in 
@@ -321,6 +332,8 @@ case $choice in
 	6) 
 		save_timeshift
 		;;
+	7)
+		setup_ansible_for_client
 	*)
 		echo "wrong choice"
 		exit 1
