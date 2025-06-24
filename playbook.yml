@@ -4,6 +4,6 @@
   tasks:
     - name: Run timeshift restore with auto-confirm
       shell: |
-        echo -e "\nn\ny\n" | timeshift --restore --snapshot "default"
+        echo -e "\nn\ny\n" | timeshift --restore --snapshot "starter"
       ignore_errors: yes
  
