@@ -311,6 +311,7 @@ case $choice in
 		install_packettracer
 		setup_nis
 		setup_pam
+		setup_ansible_for_client
 		save_timeshift
 		sudo reboot
 		;;
@@ -334,6 +335,7 @@ case $choice in
 		;;
 	7)
 		setup_ansible_for_client
+		;;
 	*)
 		echo "wrong choice"
 		exit 1
