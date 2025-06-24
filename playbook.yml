@@ -1,0 +1,9 @@
+- name: Restore Timeshift snapshot using shell + echo
+  hosts: clients
+  become: yes
+  tasks:
+    - name: Run timeshift restore with auto-confirm
+      shell: |
+        echo -e "\nn\ny\n" | timeshift --restore --snapshot "default"
+      ignore_errors: yes
+ 

@@ -6,6 +6,11 @@ sudo apt update
 
 sudo apt install -y timeshift
 sudo timeshift --create --comments "default"
+last=$(sudo ls -td /timeshift/snapshots/* | head -n1)
+echo "last snapshot is:  $last"
+sudo mv "$last" /timeshift/snapshots/default
+echo "✅ Snapshot renamed to: default"  
+
 
 # ติดตั้งแพ็คเกจพื้นฐาน
 sudo apt install -y wireshark git vlc putty
@@ -272,6 +277,10 @@ echo "/etc/pam.d/common-auth ถูกแก้ไขเรียบร้อย
 
 save_timeshift(){
 	sudo timeshift --create --comments "starter"
+	last=$(sudo ls -td /timeshift/snapshots/* | head -n1)
+	echo "last snapshot is:  $last"
+	sudo mv "$last" /timeshift/snapshots/starter
+	echo "✅ Snapshot renamed to: starter" 	
 }
 
 echo "please select choice"
@@ -292,6 +301,7 @@ case $choice in
 		setup_nis
 		setup_pam
 		save_timeshift
+		sudo reboot
 		;;
 	1)
 		setup_tool
