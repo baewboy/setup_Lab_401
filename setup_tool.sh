@@ -293,6 +293,9 @@ setup_ansible_for_client(){
 	echo "✅ User ansible พร้อมใช้งานแล้ว (sudo แบบไม่ต้องใส่ password)"
 }
 
+
+
+
 echo "please select choice"
 echo "enter 0 for automate"
 echo "1) setup tool"
@@ -307,11 +310,9 @@ read choice
 case $choice in 
 	0)
 		setup_tool
-		install_docker
 		install_packettracer
 		setup_nis
 		setup_pam
-		setup_ansible_for_client
 		save_timeshift
 		sudo reboot
 		;;
