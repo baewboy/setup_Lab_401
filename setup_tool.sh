@@ -5,11 +5,7 @@ setup_tool(){
 sudo apt update
 
 sudo apt install -y timeshift
-sudo timeshift --create --comments "default"
-last=$(sudo ls -td /timeshift/snapshots/* | head -n1)
-echo "last snapshot is:  $last"
-sudo mv "$last" /timeshift/snapshots/default
-echo "✅ Snapshot renamed to: default"  
+ 
 
 
 # ติดตั้งแพ็คเกจพื้นฐาน
@@ -151,7 +147,7 @@ cd ..
 sudo dpkg -i Packet_Tracer822_amd64_signed.deb
 
 
-packettracer
+
 
 }
 
@@ -293,7 +289,12 @@ setup_ansible_for_client(){
 	echo "✅ User ansible พร้อมใช้งานแล้ว (sudo แบบไม่ต้องใส่ password)"
 }
 
-
+setup_font(){
+	sudo mkdir -p /usr/local/share/fonts/custom
+	sudo cp fonts/* /usr/local/share/fonts/custom/
+	sudo fc-cache -f -v
+	echo "✅ Custom fonts have been installed."
+}
 
 
 echo "please select choice"
@@ -313,6 +314,7 @@ case $choice in
 		install_packettracer
 		setup_nis
 		setup_pam
+		setup_font
 		save_timeshift
 		sudo reboot
 		;;
